@@ -3,9 +3,12 @@ var bodyParser = require('body-parser');
 var express = require('express');
 var https = require('https');
 
+var bodyParser = require('body-parser');    // pull information from HTML POST (express4)
+
 var app = express();
 
-app.use(bodyParser()); 
+app.use(bodyParser.json());                                     // parse application/json
+
 
 app.set('port', (process.env.PORT || 5000));
 
@@ -15,123 +18,84 @@ app.use(express.static(__dirname + '/public'));
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
-// Canvas API Middleware
-
-app.post('/crosslist', function(req, res, next){
-
-var parentCourse = req.body.parentCourse; 
-var childCourse = req.body.childCourse; 
- 
-
-function crosslistAPI(parent, child){
-
-	 	var options = {
-		  host: 'canvas.longwood.edu',
-		  path: '/api/v1/courses/'+ child +'/sections/?access_token=18~RbqrkxPvIWg2loHognTe9JbHTTo0IR9zQjwqWRuK74erTCNCAQHRCSCaiSRLWrog',
-		  method: 'GET'
-		};
-		var str = '';
-		
-		var callback = function(response) {
-
-			function stringJSON(string){
-				string = JSON.stringify(string); 
-				return string; 
-			}
-
-			function produceJSON(string){ 
-				var str = stringJSON(string); 
-				var obj = JSON.parse(str); 
-				return obj; 
-			}
-
-		  	response.on('data', function (chunk) {
-		    	str += chunk;
-
-		  		});
-
-		  	response.on('end', function () {
-		    	console.log(str);
-
-		    	var JSONobj = produceJSON(str);  
-		    	
-		    	
-
-		    	//var courseString = JSON.stringify(str); 
-		    	
-		    	//var courseArray = JSON.parse(JSONstr);
-
-		    	console.log(typeof(JSONobj)); 
-
-		    	// if (courseArray.length != 1){
-		    	// 	console.log("Error: this course"); 
-		    	// 	next(); 
-		    	// } else {
-
-		    	// 	var section = courseArray[0]["id"]; 
-
-		    	// 	var options = {
-		    	// 		host: 'canvas.longwood.edu',
-		  			// 	path: '/api/v1/sections/'+ section +'/crosslist/'+ parentCourse + '/?access_token=18~RbqrkxPvIWg2loHognTe9JbHTTo0IR9zQjwqWRuK74erTCNCAQHRCSCaiSRLWrog',
-		  			// 	method: 'POST'
-		    	// 	}; 
-
-		    	// 	var crosslistRequest = https.request(options, function(res){
-		    	// 		console.log("made a call"); 
-		    	// 		console.log(res); 
-
-		    	// 	}); 
-
-		    	// }
-
-		    	console.log(JSONobj); 
-
-		  		});
-
-		  	response.on("error", function (){
-		  	console.log("There was an error accessing the Canvas API");
-				});
-		  }
-
-
-		var request = https.request(options, callback); 
-		
-		request.end(); 
-
-}
-
-crosslistAPI(parentCourse, childCourse); 
-
-next(); 
-}); 
-
-
-
-
-
 app.get('/', function(request, response) {
+
   response.render('pages/index');
-});
-
-
-app.get('/crosslist', function(request, response) {
-
-	 response.render('pages/crosslist');
-
 
 });
 
-app.post('/crosslist', function(req, res){
+app.post('/checkCreds', function(request, response) {   
 
-	//Access error/success messages
-	res.send("Crosslisted successfully"); 
+		var host = request.body.url; 
+		var apiKey =  request.body.apiKey; 
+		var path = '/api/v1/accounts/?access_token=' + request.body.apiKey; 	
+  	
+  		var str = '';
+  		var options = {
+		    	host: host,
+		  		path: path,
+		  		method: 'GET'
+		    	};
+  		
+  		  var req = https.request(options, function(res){
+  			
+  			res.on('data', function (chunk) {
+  				console.log("Here");
+		    	str += chunk;
+		  		
+		  		});
 
+		  	res.on('end', function () {
+		    	response.send(str); 
+
+		  		});
+		  }); 
+
+		  req.end(); 
+
+		  req.on('error', (e) => {
+			  console.error(e);
+			});
+
+});
+
+app.post('/getAcctAnalytics', function(request, response){
+
+		var host = request.body.url; 
+		var apiKey =  request.body.apiKey; 
+		var acctID = request.body.account.id; 
+		var path = '/api/v1/accounts/' + acctID + '/analytics/completed/statistics/?access_token=' + request.body.apiKey; 	
+  	
+  		var str = '';
+  		var options = {
+		    	host: host,
+		  		path: path,
+		  		method: 'GET'
+		    	};
+  		
+  		  var req = https.request(options, function(res){
+  			
+  		  res.on('data', function (chunk) {
+  				console.log("Here");
+		    	str += chunk;
+		  		
+		  });
+
+		  res.on('end', function () {
+		    	response.send(str); 
+
+		  		});
+		  }); 
+
+		  req.end(); 
+
+		  req.on('error', (e) => {
+			  console.error(e);
+			});
 
 }); 
-
 
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
-
 
