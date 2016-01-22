@@ -53,7 +53,7 @@ app.post('/checkCreds', function(request, response) {
 
 		  req.end(); 
 
-		  req.on('error', (e) => {
+		  req.on('error', function(e){
 			  console.error(e);
 			});
 
@@ -89,7 +89,7 @@ app.post('/getAcctAnalytics', function(request, response){
 
 		  req.end(); 
 
-		  req.on('error', (e) => {
+		  req.on('error', function(e){
 			  console.error(e);
 			});
 
