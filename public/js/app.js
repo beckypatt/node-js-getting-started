@@ -16,6 +16,10 @@ app.config(["$routeProvider", "$locationProvider",
 			templateUrl: "views/new-course.html", 
 			controller: "NewCourseController"
 		}).
+		when("/crosslist", {
+			templateUrl: "views/crosslist.html", 
+			controller: "CrosslistController"
+		}).
 		otherwise({
 				
 				redirectTo: "/home"	
@@ -80,6 +84,14 @@ app.controller("DashboardController", function($scope, $http, $rootScope){
 app.controller("NewCourseController", function($scope, $http, $rootScope){
 		
 		$scope.multipleCourses = false; 
+		$scope.newCourseObj = {
+			apiCreds: $rootScope.apiCreds,
+			courseObj:{ 
+			course: {
+
+			}
+		  }
+		}
 
 		$scope.getEnrollmentTerms = function(){
 
@@ -87,6 +99,97 @@ app.controller("NewCourseController", function($scope, $http, $rootScope){
 
 		$scope.createNewCourse = function(){
 
-		} ; 
+			validJSON = JSON.stringify($scope.newCourseObj); 
 
-})
+			$http.post("/newCourse", validJSON,{ 
+				headers:{'Content-Type':'application/json'}
+				})
+				.success(function(data){
+					console.log(data);
+				})
+				.error(function(data){
+					console.log('Error: ' + data);
+
+				}); 
+
+
+		};  
+
+});
+
+
+app.controller("CrosslistController", function($scope, $http, $rootScope){
+		
+		$scope.newCourseObj = {
+			apiCreds: $rootScope.apiCreds,
+			courseObj:{ }
+		}; 
+
+		$scope.parentSectionGood = false;
+		$scope.childSectionGood = false;  
+
+		$scope.checkParentSection = function(){
+
+			validJSON = JSON.stringify($scope.newCourseObj); 
+
+			$http.post("/checkParentSection", validJSON,{ 
+				headers:{'Content-Type':'application/json'}
+				})
+				.success(function(data){
+					console.log(data);
+					if (data.length == 1){
+						$scope.parentSectionGood = true; 
+						checkChildSection(); 
+					}
+				})
+				.error(function(data){
+					console.log('Error: ' + data);
+
+				});		
+
+		};
+
+		$scope.checkChildSection = function(){
+
+			validJSON = JSON.stringify($scope.newCourseObj); 
+
+			$http.post("/checkChildSection", validJSON,{ 
+				headers:{'Content-Type':'application/json'}
+				})
+				.success(function(data){
+					console.log(data);
+					if (data.length == 1){
+						$scope.childSectionGood = true; 
+					}
+				})
+				.error(function(data){
+					console.log('Error: ' + data);
+
+				});
+
+
+		}
+
+		$scope.createNewCourse = function(){
+
+			validJSON = JSON.stringify($scope.newCourseObj); 
+
+			$http.post("/newCourse", validJSON,{ 
+				headers:{'Content-Type':'application/json'}
+				})
+				.success(function(data){
+					console.log(data);
+				})
+				.error(function(data){
+					console.log('Error: ' + data);
+
+				}); 
+
+
+		};  
+
+});
+
+
+
+

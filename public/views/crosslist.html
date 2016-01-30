@@ -10,10 +10,15 @@
 
       <form>
         <div class="form-group">
-          <label for="courseName">Course Name</label>
-          <input type="text" class="form-control" id="courseName" placeholder="Intro to Canvas API" ng-model="newCourseObj.courseObj.course.name">
+          <label for="parentCourseID">Parent Course ID</label>
+          <input type="text" class="form-control" id="parentCourseID" placeholder="Parent Course ID" ng-model="newCourseObj.courseObj.parentCourseID"><span class="glyphicon glyphicon-circle-ok" ng-show="parentCourseGood == true"></span>
         </div>
         <div class="form-group">
+          <label for="childCourseID">Child Course ID</label>
+          <input type="text" class="form-control" id="childCourseID" placeholder="Parent Course ID" ng-model="newCourseObj.courseObj.childCourseID"><span class="glyphicon glyphicon-circle-ok" ng-show="parentCourseGood == true"></span>
+        </div>
+
+<!--         <div class="form-group">
           <label for="courseCode">Course Code Base</label>
           <input type="text" class="form-control" id="courseCode" placeholder="DEC-400">
         </div>
@@ -35,8 +40,8 @@
           <p class="help-block">Course Code will Auto-Increment</p>
           <input type="number" class="form-control" id="numberCourses" placeholder="DEC-400-01">
           </div>
-        </div>
-        <button ng-click="createNewCourse()" class="btn btn-default">Submit</button>
+        </div> -->
+        <button ng-click="checkParentSection()" class="btn btn-default">Submit</button>
       </form>
 
       

@@ -95,6 +95,161 @@ app.post('/getAcctAnalytics', function(request, response){
 
 }); 
 
+app.post('/newCourse', function(request, response){
+
+
+		var	jsonParams = JSON.stringify(request.body.courseObj); 
+		var host = request.body.apiCreds.url; 
+		var apiKey =  request.body.apiCreds.apiKey; 
+		var acctID = request.body.apiCreds.account.id; 
+		var path = '/api/v1/accounts/' + acctID + '/courses'; 	
+  	
+  		console.log(jsonParams); 
+
+  		var str = '';
+  		var options = {
+		    	host: host,
+		  		path: path,
+		  		method: 'POST',
+		  		headers: {
+    			'Content-Type': 'application/json', 
+    			'Authorization' : 'Bearer ' + apiKey, 
+    			'Content-Length': jsonParams.length
+  				} 
+		    };
+  		
+  		  var req = https.request(options, function(res){
+  			
+  		  res.on('data', function (chunk) {
+  				console.log("Here Response");
+		    	str += chunk;	
+		  });
+
+		  res.on('end', function () {
+		    	response.send(str); 
+
+		  		});
+		  }).write(jsonParams); 
+
+}); 
+
+app.post('/checkParentSection', function(request, response){
+
+		var	jsonParams = JSON.stringify(request.body.courseObj); 
+		var host = request.body.apiCreds.url; 
+		var apiKey =  request.body.apiCreds.apiKey; 
+		var courseID =  request.body.courseObj.parentCourseID; 
+		var path = '/api/v1/courses/' + courseID + '/sections';	
+  	
+  		console.log(jsonParams); 
+
+  		var str = '';
+  		var options = {
+		    	host: host,
+		  		path: path,
+		  		method: 'GET',
+		  		headers: {
+    			'Content-Type': 'application/json', 
+    			'Authorization' : 'Bearer ' + apiKey, 
+    			'Content-Length': jsonParams.length
+  				} 
+		    };
+  		
+  		  var req = https.request(options, function(res){
+  			
+  		  res.on('data', function (chunk) {
+  				console.log("Here Response");
+		    	str += chunk;	
+		  });
+
+		  res.on('end', function () {
+		    	response.send(str); 
+
+		  		});
+		  }).write(jsonParams); 
+
+
+
+
+
+});
+
+app.post('/checkChildSection', function(request, response){
+
+		var	jsonParams = JSON.stringify(request.body.courseObj); 
+		var host = request.body.apiCreds.url; 
+		var apiKey =  request.body.apiCreds.apiKey; 
+		var courseID =  request.body.courseObj.childCourseID; 
+		var path = '/api/v1/courses/' + courseID + '/sections';	
+  	
+  		console.log(jsonParams); 
+
+  		var str = '';
+  		var options = {
+		    	host: host,
+		  		path: path,
+		  		method: 'GET',
+		  		headers: {
+    			'Content-Type': 'application/json', 
+    			'Authorization' : 'Bearer ' + apiKey, 
+    			'Content-Length': jsonParams.length
+  				} 
+		    };
+  		
+  		  var req = https.request(options, function(res){
+  			
+  		  res.on('data', function (chunk) {
+  				console.log("Here Response");
+		    	str += chunk;	
+		  });
+
+		  res.on('end', function () {
+		    	response.send(str); 
+
+		  		});
+		  }).write(jsonParams); 
+
+
+});
+
+app.post('/crosslist', function(request, response){
+
+		var	jsonParams = JSON.stringify(request.body.courseObj); 
+		var host = request.body.apiCreds.url; 
+		var apiKey =  request.body.apiCreds.apiKey; 
+		var courseID =  request.body.courseObj.parentCourseID; 
+		var path = '/api/v1/courses/' + courseID + '/sections'; 	
+  	
+  		console.log(jsonParams); 
+
+  		var str = '';
+  		var options = {
+		    	host: host,
+		  		path: path,
+		  		method: 'GET',
+		  		headers: {
+    			'Content-Type': 'application/json', 
+    			'Authorization' : 'Bearer ' + apiKey, 
+    			'Content-Length': jsonParams.length
+  				} 
+		    };
+  		
+  		  var req = https.request(options, function(res){
+  			
+  		  res.on('data', function (chunk) {
+  				console.log("Here Response");
+		    	str += chunk;	
+		  });
+
+		  res.on('end', function () {
+		    	response.send(str); 
+
+		  		});
+		  }).write(jsonParams); 
+
+
+}); 
+
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
