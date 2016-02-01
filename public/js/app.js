@@ -77,6 +77,15 @@ app.controller("DashboardController", function($scope, $http, $rootScope){
 
 			}); 
 
+		$http.post("/getTerms", $rootScope.apiCreds)
+			.success(function(data){
+				console.log(data);
+			})
+			.error(function(data){
+				console.log('Error: ' + data);
+
+			}); 	
+
 });  
 
 
@@ -137,56 +146,69 @@ app.controller("CrosslistController", function($scope, $http, $rootScope){
 				})
 				.success(function(data){
 					console.log(data);
-					if (data.length == 1){
-						$scope.parentSectionGood = true; 
+					if (data.length !== 0){
+
+						$scope.parentSectionGood = true; 	
 						checkChildSection(); 
+					} else {
+						$scope.errorMessage = "Something is funky with this parent course. It is likely already the child course of something else: " + data;
 					}
 				})
 				.error(function(data){
 					console.log('Error: ' + data);
+					$scope.errorMessage = 'Error: ' + data; 
 
 				});		
 
 		};
 
-		$scope.checkChildSection = function(){
+		function checkChildSection(){
 
-			validJSON = JSON.stringify($scope.newCourseObj); 
+			var validJSON = JSON.stringify($scope.newCourseObj); 
 
 			$http.post("/checkChildSection", validJSON,{ 
 				headers:{'Content-Type':'application/json'}
 				})
 				.success(function(data){
 					console.log(data);
-					if (data.length == 1){
+					if (data.length !== 0){
+						$scope.newCourseObj.courseObj.childSectionID = data[0].id; 
 						$scope.childSectionGood = true; 
+						console.log(data); 
+						console.log($scope.newCourseObj.courseObj.childSectionID); 
+						console.log("Would crosslist these two sections"); 
+						crosslistCourses(); 
+
+					} else {
+						$scope.errorMessage = "Something is funky with this child course. It is likely already crosslisted somewhere else: " + data;
 					}
 				})
 				.error(function(data){
 					console.log('Error: ' + data);
+					$scope.errorMessage = "Error: " + data;
 
 				});
-
-
 		}
 
-		$scope.createNewCourse = function(){
+		function crosslistCourses(){
 
-			validJSON = JSON.stringify($scope.newCourseObj); 
+			var validJSON = JSON.stringify($scope.newCourseObj); 
 
-			$http.post("/newCourse", validJSON,{ 
+			$http.post("/crosslist", validJSON, { 
 				headers:{'Content-Type':'application/json'}
 				})
 				.success(function(data){
-					console.log(data);
+					console.log(data); 
+					$scope.successMessage = "Successfully crosslisted section " + data.name + "."; 
 				})
 				.error(function(data){
 					console.log('Error: ' + data);
+					$scope.errorMessage = "Error: " + data;
 
-				}); 
+				});
 
+		}
 
-		};  
 
 });
 

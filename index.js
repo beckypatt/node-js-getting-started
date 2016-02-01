@@ -7,7 +7,7 @@ var bodyParser = require('body-parser');    // pull information from HTML POST (
 
 var app = express();
 
-app.use(bodyParser.json());                                     // parse application/json
+app.use(bodyParser.json());    // parse application/json
 
 
 app.set('port', (process.env.PORT || 5000));
@@ -24,18 +24,23 @@ app.get('/', function(request, response) {
 
 });
 
+// Route Controllers for Angular Auth CTRL 
+
 app.post('/checkCreds', function(request, response) {   
 
 		var host = request.body.url; 
 		var apiKey =  request.body.apiKey; 
-		var path = '/api/v1/accounts/?access_token=' + request.body.apiKey; 	
+		var path = '/api/v1/accounts'; 	
   	
   		var str = '';
   		var options = {
 		    	host: host,
 		  		path: path,
-		  		method: 'GET'
-		    	};
+		  		method: 'GET', 
+		  		headers: { 
+    			'Authorization' : 'Bearer ' + apiKey
+  				} 
+		    };
   		
   		  var req = https.request(options, function(res){
   			
@@ -59,19 +64,24 @@ app.post('/checkCreds', function(request, response) {
 
 });
 
+// Route Controllers for Angular Dashboard CTRL 
+
 app.post('/getAcctAnalytics', function(request, response){
 
 		var host = request.body.url; 
 		var apiKey =  request.body.apiKey; 
 		var acctID = request.body.account.id; 
-		var path = '/api/v1/accounts/' + acctID + '/analytics/completed/statistics/?access_token=' + request.body.apiKey; 	
+		var path = '/api/v1/accounts/' + acctID + '/analytics/completed/statistics' ;  	
   	
   		var str = '';
   		var options = {
 		    	host: host,
 		  		path: path,
-		  		method: 'GET'
-		    	};
+		  		method: 'GET', 
+		  		headers: { 
+    			'Authorization' : 'Bearer ' + apiKey
+  				} 
+		    };
   		
   		  var req = https.request(options, function(res){
   			
@@ -94,6 +104,47 @@ app.post('/getAcctAnalytics', function(request, response){
 			});
 
 }); 
+
+app.post('/getTerms', function(request, response){
+
+		var host = request.body.url; 
+		var apiKey =  request.body.apiKey; 
+		var acctID = request.body.account.id; 
+		var path = '/api/v1/accounts/' + acctID + '/terms' ;  	
+  	
+  		var str = '';
+  		var options = {
+		    	host: host,
+		  		path: path,
+		  		method: 'GET', 
+		  		headers: { 
+    			'Authorization' : 'Bearer ' + apiKey
+  				} 
+		    };
+  		
+  		  var req = https.request(options, function(res){
+  		   
+  		  res.on('data', function (chunk) {
+  				console.log("Here");
+		    	str += chunk;
+		  		
+		  });
+
+		  res.on('end', function () {
+		    	response.send(str); 
+
+		  		});
+		  }); 
+
+		  req.end(); 
+
+		  req.on('error', function(e){
+			  console.error(e);
+			});
+
+}); 
+
+// Route Controllers for Angular New Course CTRL 
 
 app.post('/newCourse', function(request, response){
 
@@ -132,6 +183,8 @@ app.post('/newCourse', function(request, response){
 		  }).write(jsonParams); 
 
 }); 
+
+// Route Controllers for Angular Crosslist CTRL 
 
 app.post('/checkParentSection', function(request, response){
 
@@ -199,7 +252,7 @@ app.post('/checkChildSection', function(request, response){
   		  var req = https.request(options, function(res){
   			
   		  res.on('data', function (chunk) {
-  				console.log("Here Response");
+  				console.log("Here Response Child");
 		    	str += chunk;	
 		  });
 
@@ -218,7 +271,8 @@ app.post('/crosslist', function(request, response){
 		var host = request.body.apiCreds.url; 
 		var apiKey =  request.body.apiCreds.apiKey; 
 		var courseID =  request.body.courseObj.parentCourseID; 
-		var path = '/api/v1/courses/' + courseID + '/sections'; 	
+		var sectionID = request.body.courseObj.childSectionID; 
+		var path = '/api/v1/sections/' + sectionID  + '/crosslist/' + courseID; 	
   	
   		console.log(jsonParams); 
 
@@ -226,7 +280,7 @@ app.post('/crosslist', function(request, response){
   		var options = {
 		    	host: host,
 		  		path: path,
-		  		method: 'GET',
+		  		method: 'POST',
 		  		headers: {
     			'Content-Type': 'application/json', 
     			'Authorization' : 'Bearer ' + apiKey, 
