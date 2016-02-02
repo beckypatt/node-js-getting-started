@@ -114,3 +114,10 @@ div.courses ul {
 iframe#tool_content{
 height: 500px; 
 } 
+
+/*Fix overflow on dashboard content*/
+
+#content {
+  overflow: inherit;
+
+}
