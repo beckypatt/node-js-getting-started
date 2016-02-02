@@ -3,7 +3,7 @@
 
 /* Replace the gray background with something that matches your colors.  You can use .pngs with alpha transparency. If you don't use an image, you need to remove ours*/
 #header, #header.no-user { 
-  background: url("canvas-longwood-bg.jpg") repeat-x scroll 0 0;
+  background: url("https://piedmont.longwood.edu/CanvasJS/canvas-longwood-bg.jpg") repeat-x scroll 0 0;
   height:70px;
   /* OR background-image: none; 
   background-color: #EBF5FA;*/
@@ -16,7 +16,7 @@
 
 /*replace the canvas logo with your logo*/
 #header-logo, #header.no-user #header-logo {
-  background: url("canvas-longwood-logo.png") no-repeat scroll 0 0;
+  background: url("https://piedmont.longwood.edu/CanvasJS/canvas-longwood-logo.png") no-repeat scroll 0 0;
   width:180px;
   height:38px;
   left:16px;
@@ -28,7 +28,7 @@
 
 /*if you replace the left canvas logo, move a smaller one to the right side of the header--I made the image gray first*/
 #header-logo-secondary, #header.no-user #header-logo-secondary  {
-  background: url("Canvas_byinstructure_white_web-sm.png") no-repeat scroll 0 0 transparent;
+  background: url("https://piedmont.longwood.edu/CanvasJS/Canvas_byinstructure_white_web-sm.png") no-repeat scroll 0 0 transparent;
   bottom: 8px;
   height: 32px;
   position: absolute;
