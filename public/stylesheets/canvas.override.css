@@ -115,12 +115,8 @@ iframe#tool_content{
 height: 500px; 
 } 
 
-/*Fix overflow on dashboard content*/
+/* Hide JS links at 1060 or smaller */
 
-#content {
-  overflow: inherit;
-
-}
 
 @media (max-width: 1060px){
   #library_menu_item {
