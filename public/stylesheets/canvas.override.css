@@ -121,3 +121,12 @@ height: 500px;
   overflow: inherit;
 
 }
+
+@media (max-width: 1060px){
+  #library_menu_item {
+    display: none; 
+  }
+  #studentserv_menu_item {
+    display: none; 
+  }
+}
