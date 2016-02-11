@@ -92,25 +92,41 @@ app.controller("DashboardController", function($scope, $http, $rootScope){
 
 app.controller("NewCourseController", function($scope, $http, $rootScope){
 		
+		$scope.section = ""; 
 		$scope.multipleCourses = false; 
 		$scope.newCourseObj = {
 			apiCreds: $rootScope.apiCreds,
 			courseObj:{ 
 			course: {
-
+				name: "", 
+				course_code: "" 
 			}
 		  }
-		}
+		}; 
 
-		$scope.getEnrollmentTerms = function(){
+		$scope.messages = []; 
 
-		};
+		//TODO: Create a collapsable element with advanced options, 
+		// incl. calendar for start date/end date using Angular Bootstrap UI 
+		// radio buttons for terms  
+
+		// $scope.getEnrollmentTerms = function(){
+
+		// };
 
 		$scope.createNewCourse = function(){
 
-			validJSON = JSON.stringify($scope.newCourseObj); 
+			if ($scope.multipleCourses === false){
 
-			$http.post("/newCourse", validJSON,{ 
+				var section = $scope.section; 
+				$scope.newCourseObj.courseObj.course.name = $scope.newCourseObj.courseObj.course.name + "-" + section;
+				$scope.newCourseObj.courseObj.course.course_code = $scope.newCourseObj.courseObj.course.course_code + "-" + section;
+
+				var validJSON = JSON.stringify($scope.newCourseObj); 
+
+				console.log(validJSON); 
+				
+				$http.post("/newCourse", validJSON,{ 
 				headers:{'Content-Type':'application/json'}
 				})
 				.success(function(data){
@@ -119,15 +135,65 @@ app.controller("NewCourseController", function($scope, $http, $rootScope){
 				.error(function(data){
 					console.log('Error: ' + data);
 
-				}); 
+				}); 	
+			}
+
+			if ($scope.multipleCourses === true){
+					
+				var numberOfCourses = $scope.numberOfCourses; 
+				
+				//create references to canonical name and course code so that we can modify and 
+				//post $scope variables 
+				var courseName = $scope.newCourseObj.courseObj.course.name; 
+				var courseCode = $scope.newCourseObj.courseObj.course.course_code;  
+
+				for (var i = 1; i <= numberOfCourses; i++){
+
+					if (i < 10){
+						i = i.toString(); 
+						i = "0"+i;
+						console.log(i);  
+					}
+
+				$scope.newCourseObj.courseObj.course.name = courseName + "-" + i;
+				$scope.newCourseObj.courseObj.course.course_code = courseCode + "-" + i;
+
+				var validJSON = JSON.stringify($scope.newCourseObj); 
+				console.log(validJSON); 
 
 
-		};  
+				}
+
+				$scope.newCourseObj.courseObj.course.name = "";
+				$scope.newCourseObj.courseObj.course.course_code = ""; 
+				$scope.numberOfCourses = ""; 
+				$scope.section = ""; 
+			
+			}
+
+
+		}
+
+
+		// 	$http.post("/newCourse", validJSON,{ 
+		// 		headers:{'Content-Type':'application/json'}
+		// 		})
+		// 		.success(function(data){
+		// 			console.log(data);
+		// 		})
+		// 		.error(function(data){
+		// 			console.log('Error: ' + data);
+
+		// 		}); 
+
+
+		// };  
 
 });
 
 
 app.controller("CrosslistController", function($scope, $http, $rootScope){
+		
 		
 		$scope.newCourseObj = {
 			apiCreds: $rootScope.apiCreds,
@@ -136,6 +202,10 @@ app.controller("CrosslistController", function($scope, $http, $rootScope){
 
 		$scope.parentSectionGood = false;
 		$scope.childSectionGood = false;  
+
+		//Function that checks parent section. If parent section returns good
+		//then call checkChildSection from within check parent section. If child section returns good
+		//call crosslist from checkChildSection
 
 		$scope.checkParentSection = function(){
 
@@ -164,6 +234,8 @@ app.controller("CrosslistController", function($scope, $http, $rootScope){
 
 		function checkChildSection(){
 
+			//returns section object from node, parses id from section object and adds to $scope
+
 			var validJSON = JSON.stringify($scope.newCourseObj); 
 
 			$http.post("/checkChildSection", validJSON,{ 
@@ -171,6 +243,7 @@ app.controller("CrosslistController", function($scope, $http, $rootScope){
 				})
 				.success(function(data){
 					console.log(data);
+					//write two error check statements here (===1 is good, ===0 || >1 bad)
 					if (data.length !== 0){
 						$scope.newCourseObj.courseObj.childSectionID = data[0].id; 
 						$scope.childSectionGood = true; 

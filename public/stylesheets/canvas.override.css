@@ -2,9 +2,10 @@
 /*If you change 
 
 /* Replace the gray background with something that matches your colors.  You can use .pngs with alpha transparency. If you don't use an image, you need to remove ours*/
+/* Added 1 px to height | UI fix via Canvas on 02/07/2016 */
 #header, #header.no-user { 
   background: url("https://piedmont.longwood.edu/CanvasJS/canvas-longwood-bg.jpg") repeat-x scroll 0 0;
-  height:70px;
+  height:71px;
   /* OR background-image: none; 
   background-color: #EBF5FA;*/
 }

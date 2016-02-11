@@ -4,6 +4,7 @@ var express = require('express');
 var https = require('https');
 
 var bodyParser = require('body-parser');    // pull information from HTML POST (express4)
+var linkParser = require('parse-link-header'); 
 
 var app = express();
 
@@ -125,13 +126,14 @@ app.post('/getTerms', function(request, response){
   		  var req = https.request(options, function(res){
   		   
   		  res.on('data', function (chunk) {
-  				console.log("Here");
+  				console.log("Here"); 
 		    	str += chunk;
-		  		
 		  });
 
 		  res.on('end', function () {
-		    	response.send(str); 
+		  		var links = res.headers["link"]; 
+		  		var parsedLinks = linkParser(links); 
+		    	response.send(parsedLinks); 
 
 		  		});
 		  }); 
