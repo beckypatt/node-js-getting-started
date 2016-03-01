@@ -39,10 +39,12 @@
         <button ng-click="createNewCourse()" class="btn btn-default">Submit</button>
       </form>
 
-      <div>
-        <li ng-repeat="message in successMessages" class="alert alert-success">
-          {{}}
-        </li>
+      <div ng-repeat="message in errorMessages" class="alert alert-danger">
+          There was an error: {{message}}
+      </div> 
+
+      <div ng-repeat="message in successMessages" class="alert alert-success">
+         <span class="glyphicon glyphicon-ok-circle"></span> Successfully created {{message.name}} with an ID of {{message.id}}! 
       </div>  
 
       

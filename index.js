@@ -11,7 +11,7 @@ var app = express();
 app.use(bodyParser.json());    // parse application/json
 
 
-app.set('port', (process.env.PORT || 5000));
+app.set('port', (process.env.PORT || 3000));
 
 app.use(express.static(__dirname + '/public'));
 
@@ -65,7 +65,7 @@ app.post('/checkCreds', function(request, response) {
 
 });
 
-// Route Controllers for Angular Dashboard CTRL 
+//Route Controllers for Angular Dashboard CTRL 
 
 app.post('/getAcctAnalytics', function(request, response){
 
@@ -303,6 +303,47 @@ app.post('/crosslist', function(request, response){
 		  		});
 		  }).write(jsonParams); 
 
+
+}); 
+
+// Create Dev Shells Paths 
+
+app.post('/getCourseEnrollments', function(request, response){
+
+		var host = request.body.apiCreds.url; 
+		var apiKey =  request.body.apiCreds.apiKey; 
+		var courseID = request.body.enrollment.course_id; 
+		var path = '/api/v1/courses/' + courseID + '/enrollments' ;  	
+  	
+  		var str = '';
+  		var options = {
+		    	host: host,
+		  		path: path,
+		  		method: 'GET', 
+		  		headers: { 
+    			'Authorization' : 'Bearer ' + apiKey
+  				} 
+		    };
+  		
+  		  var req = https.request(options, function(res){
+  			
+  		  res.on('data', function (chunk) {
+  				console.log("Here");
+		    	str += chunk;
+		  		
+		  });
+
+		  res.on('end', function () {
+		    	response.send(str); 
+
+		  		});
+		  }); 
+
+		  req.end(); 
+
+		  req.on('error', function(e){
+			  console.error(e);
+			});
 
 }); 
 

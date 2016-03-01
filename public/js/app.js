@@ -20,6 +20,10 @@ app.config(["$routeProvider", "$locationProvider",
 			templateUrl: "views/crosslist.html", 
 			controller: "CrosslistController"
 		}).
+		when("/dev-shells", {
+			templateUrl: "views/dev-shells.html", 
+			controller: "DevShellsController"
+		}).
 		otherwise({
 				
 				redirectTo: "/home"	
@@ -32,11 +36,20 @@ app.config(["$routeProvider", "$locationProvider",
 }]); 
 
 
-app.controller("ApiConnectController", function($scope, $http, $rootScope){
+app.controller("ApiConnectController",['$scope', '$rootScope', '$http', 'Authentication',
+	function($scope, $rootScope, $http, Authentication){
 	
 	$rootScope.apiCreds = {
+		apiKey: "",
+		url: "", 
+		account: {
+			id: "", 
+			name: ""
+		} 
 
 	}; 
+
+	$scope.authSuccess = false; 
 
 	$scope.checkCreds = function(){
 
@@ -46,13 +59,15 @@ app.controller("ApiConnectController", function($scope, $http, $rootScope){
 		$http.post("/checkCreds", $rootScope.apiCreds)
 			.success(function(data){
 
-
+				$scope.authSuccess = true; 
 				$rootScope.apiCreds.account = {
 				 	id: data[0]["id"], 
 				 	name: data[0]["name"] 
 
 				}; 
 				console.log($rootScope.apiCreds); 
+				
+				//Authentication.setAuth($rootScope.apiCreds); 
 
 			})
 			.error(function(data){
@@ -62,12 +77,16 @@ app.controller("ApiConnectController", function($scope, $http, $rootScope){
 
 	}
 
-});  
+}]);  
 
 
-app.controller("DashboardController", function($scope, $http, $rootScope){
+app.controller("DashboardController",['$scope', '$http', '$rootScope', 'Authentication',
+	function($scope, $http, $rootScope, Authentication){
 
+		console.log($rootScope.apiCreds); 
 
+		//Authentication.checkAuth();
+		
 		$http.post("/getAcctAnalytics", $rootScope.apiCreds)
 			.success(function(data){
 				console.log(data);
@@ -86,7 +105,7 @@ app.controller("DashboardController", function($scope, $http, $rootScope){
 
 			}); 	
 
-});  
+}]);  
 
 
 
@@ -104,7 +123,8 @@ app.controller("NewCourseController", function($scope, $http, $rootScope){
 		  }
 		}; 
 
-		$scope.messages = []; 
+		$scope.successMessages = [];
+		$scope.errorMessages = [];  
 
 		//TODO: Create a collapsable element with advanced options, 
 		// incl. calendar for start date/end date using Angular Bootstrap UI 
@@ -131,9 +151,11 @@ app.controller("NewCourseController", function($scope, $http, $rootScope){
 				})
 				.success(function(data){
 					console.log(data);
+					$scope.successMessages.push(data); 
 				})
 				.error(function(data){
 					console.log('Error: ' + data);
+					$scope.errorMessages.push(data); 
 
 				}); 	
 			}
@@ -159,7 +181,21 @@ app.controller("NewCourseController", function($scope, $http, $rootScope){
 				$scope.newCourseObj.courseObj.course.course_code = courseCode + "-" + i;
 
 				var validJSON = JSON.stringify($scope.newCourseObj); 
-				console.log(validJSON); 
+				console.log(validJSON);
+
+					$http.post("/newCourse", validJSON,{ 
+						headers:{'Content-Type':'application/json'}
+						})
+						.success(function(data){
+							console.log(data);
+							$scope.successMessages.push(data);
+						})
+						.error(function(data){
+							console.log('Error: ' + data);
+							$scope.errorMessages.push(data); 
+
+						}); 
+					};  
 
 
 				}
@@ -168,27 +204,10 @@ app.controller("NewCourseController", function($scope, $http, $rootScope){
 				$scope.newCourseObj.courseObj.course.course_code = ""; 
 				$scope.numberOfCourses = ""; 
 				$scope.section = ""; 
-			
-			}
 
 
 		}
-
-
-		// 	$http.post("/newCourse", validJSON,{ 
-		// 		headers:{'Content-Type':'application/json'}
-		// 		})
-		// 		.success(function(data){
-		// 			console.log(data);
-		// 		})
-		// 		.error(function(data){
-		// 			console.log('Error: ' + data);
-
-		// 		}); 
-
-
-		// };  
-
+ 
 });
 
 
@@ -282,6 +301,96 @@ app.controller("CrosslistController", function($scope, $http, $rootScope){
 
 		}
 
+
+});
+
+app.controller("DevShellsController", function($scope, $http, $rootScope){
+
+	$scope.enrollmentsObject = {
+		apiCreds: $rootScope.apiCreds, 
+		enrollment: {
+			course_id: ""
+		}
+	}; 
+
+	$scope.successMessages = [];
+	$scope.errorMessages = [];  
+
+
+	$scope.createNewDevShells = function(){
+
+		$http.post("/getCourseEnrollments", $scope.enrollmentsObject)
+			.success(function(data){
+				console.log(data);
+				loopStudents(data); 
+			})
+			.error(function(data){
+				console.log('Error: ' + data);
+
+			}); 
+
+	}
+
+	
+	//First callback function for createNewDevShells
+	function loopStudents(enrollments){
+
+		for(var i = 0; i < enrollments.length; i ++){
+
+			if(enrollments[i].type === "StudentEnrollment"); 
+
+			var sortableName = enrollments[i].user.sortable_name; 
+			var nameSplit = sortableName.split(","); 
+			console.log(nameSplit); 
+			var name = "LOTI_"+ enrollments[i].user.login_id; 
+			var course_code = "LOTI_" + name; 
+			var user_id = enrollments[i].user.id; 
+
+			createCourse(name, course_code, user_id); 
+
+		}
+
+	}
+
+	//Second callback function for createCourse
+	function createCourse(name, course_code, user_id){
+
+		$scope.newCourseObj = {
+			apiCreds: $rootScope.apiCreds,
+			courseObj:{ 
+			course: {
+				name: name, 
+				course_code: course_code 
+			}
+		  }
+		}; 
+
+		var validJSON = JSON.stringify($scope.newCourseObj); 
+
+		$http.post("/newCourse", validJSON,{ 
+				headers:{'Content-Type':'application/json'}
+				})
+				.success(function(data){
+					console.log(data);
+					//put success callback to enroll teacher here 
+					$scope.successMessages.push("Successfully created course: " + data); 
+				})
+				.error(function(data){
+					console.log('Error: ' + data);
+					$scope.errorMessages.push(data); 
+
+				}); 
+
+
+	}	
+
+	//Third callback function for createNewDevShells
+	function enrollTeacher(){
+
+
+
+	}	
+	
 
 });
 

@@ -6,7 +6,7 @@
         <input type="text" id="apiKey" class="form-control" placeholder="API Key" ng-model="apiCreds.apiKey" required>
         <button class="btn btn-lg btn-primary btn-block" ng-click="checkCreds()">Connect</button>
       </form>
-      <div ng-show="apiCreds.account" class="alert alert-success">
+      <div ng-show="authSuccess === true" class="alert alert-success">
         <h3> <span class="glyphicon glyphicon-circle-ok"></span>Successfully Connected!</h3>
         <h4>You have access to the following accounts:</h4>
         <p>{{apiCreds.account.name}}</p>
