@@ -25,6 +25,17 @@ app.get('/', function(request, response) {
 
 });
 
+// Route Controller for /DirectURLRequest
+// This route does not parse and create a path and takes/needs a direct url to the API resource
+// This route is most frequnetly used with paginated requests
+
+app.post('/directURLRequest', function(request, response){
+
+
+
+
+}); 
+
 // Route Controllers for Angular Auth CTRL 
 
 app.post('/checkCreds', function(request, response) {   
@@ -106,7 +117,11 @@ app.post('/getAcctAnalytics', function(request, response){
 
 }); 
 
-app.post('/getTerms', function(request, response){
+app.post('/getAllTerms', function(request, response){
+
+		//This will be a paginated response for most people
+		//link headers object will be passed to angular where it will
+		//make get requests using the /blanketRequest path on the node server
 
 		var host = request.body.url; 
 		var apiKey =  request.body.apiKey; 
@@ -182,6 +197,7 @@ app.post('/newCourse', function(request, response){
 		    	response.send(str); 
 
 		  		});
+
 		  }).write(jsonParams); 
 
 }); 
@@ -346,6 +362,46 @@ app.post('/getCourseEnrollments', function(request, response){
 			});
 
 }); 
+
+app.post('/enrollTeacher', function(request, response){
+
+		var	jsonParams = JSON.stringify(request.body.enrollmentParams); 
+		var host = request.body.apiCreds.url; 
+		var apiKey =  request.body.apiCreds.apiKey; 
+		var courseID =  request.body.course_id;  
+		var path = '/api/v1/courses/' + courseID  + '/enrollments';  	
+  	
+  		console.log(jsonParams); 
+
+  		var str = '';
+  		var options = {
+		    	host: host,
+		  		path: path,
+		  		method: 'POST',
+		  		headers: {
+    			'Content-Type': 'application/json', 
+    			'Authorization' : 'Bearer ' + apiKey, 
+    			'Content-Length': jsonParams.length
+  				} 
+		    };
+  		
+  		  var req = https.request(options, function(res){
+  			
+  		  res.on('data', function (chunk) {
+  				console.log("Here Response");
+		    	str += chunk;	
+		  });
+
+		  res.on('end', function () {
+		    	response.send(str); 
+
+		  		});
+		  }).write(jsonParams); 
+
+
+});
+
+
 
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));

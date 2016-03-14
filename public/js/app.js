@@ -96,9 +96,14 @@ app.controller("DashboardController",['$scope', '$http', '$rootScope', 'Authenti
 
 			}); 
 
-		$http.post("/getTerms", $rootScope.apiCreds)
+		$http.post("/getAllTerms", $rootScope.apiCreds)
 			.success(function(data){
 				console.log(data);
+				if(data.next){
+
+
+					$http.post("/directURLRequest", $)
+				}
 			})
 			.error(function(data){
 				console.log('Error: ' + data);
@@ -343,7 +348,7 @@ app.controller("DevShellsController", function($scope, $http, $rootScope){
 			var nameSplit = sortableName.split(","); 
 			console.log(nameSplit); 
 			var name = "LOTI_"+ enrollments[i].user.login_id; 
-			var course_code = "LOTI_" + name; 
+			var course_code = name; 
 			var user_id = enrollments[i].user.id; 
 
 			createCourse(name, course_code, user_id); 
@@ -373,11 +378,13 @@ app.controller("DevShellsController", function($scope, $http, $rootScope){
 				.success(function(data){
 					console.log(data);
 					//put success callback to enroll teacher here 
-					$scope.successMessages.push("Successfully created course: " + data); 
+					$scope.successMessages.push("Successfully created course: " + data.name);
+					var course_id = data.id;  
+					enrollTeacher(user_id, course_id); 
 				})
 				.error(function(data){
 					console.log('Error: ' + data);
-					$scope.errorMessages.push(data); 
+					$scope.errorMessages.push("Something weird happened when trying to enroll for " + data.name); 
 
 				}); 
 
@@ -385,7 +392,36 @@ app.controller("DevShellsController", function($scope, $http, $rootScope){
 	}	
 
 	//Third callback function for createNewDevShells
-	function enrollTeacher(){
+	function enrollTeacher(user_id, course_id){
+
+		var enrollmentObj = {
+			apiCreds: $rootScope.apiCreds, 
+			course_id: course_id,
+			enrollmentParams: { 
+				enrollment : {
+					user_id: user_id, 
+					type: 'TeacherEnrollment', 
+					enrollment_state: 'active'
+				}
+			}
+
+		} 
+
+		var validJSON = JSON.stringify(enrollmentObj); 
+
+		$http.post("/enrollTeacher", validJSON,{ 
+				headers:{'Content-Type':'application/json'}
+				})
+				.success(function(data){
+					console.log(data);
+					//Print out success message for enrolled teacher
+					$scope.successMessages.push("Successfully completed " + data.type + " at " + data.created_at enrolled: " for course " + data.course_id); 
+				})
+				.error(function(data){
+					console.log('Error: ' + data);
+					$scope.errorMessages.push("Something weird happened when trying to enroll for " + data.course_id); 
+
+				}); 
 
 
 

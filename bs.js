@@ -87,7 +87,7 @@ function crosslistAPI(parent, child){
 		    	18~3bPQpAwJRgNHAYROD1iuxBCDf2UwR9bo3h94HC1d7GazvC4L6H97ywqhCwAzeC7z
 
 		    	// Beta
-		    	18~Q7i5unZy6ItfHFofQGxGqpUDozGbM2ALXTvPfqJTironnGS4BiXdG1mqz6MWeLhV
+		    	18~1eoyxxhrezcyvfUwwf6xOKAr56ZOgmUWIolTdWfzPC7pLo7AegxMZD5M31ME9arR
 
 		    	//Test
 		    	18~KNYaQwpSEHHLLo9nhST2VLByxIk743GmY6ytLmRBCt5KoArtsJx7cTpMShD8qZPe
