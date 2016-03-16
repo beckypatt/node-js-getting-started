@@ -1,33 +1,20 @@
-# node-js-getting-started
+# Canvas REST API Tool 
 
-A barebones Node.js app using [Express 4](http://expressjs.com/).
+This tool exists to simplify certain admin-level tasks and Canvas and helps to expose the power of the API to support staff without development experience. You can access and [use the full tool live at this URL](https://canvas-api-tool.herokuapp.com/#/home)
 
-This application supports the [Getting Started with Node on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs) article - check it out.
+## Connecting 
 
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
+1. Obtain an API key from your Canvas instance. Note: all operations supported by this tool currently require an admin level API key. 
 
-## Running Locally
+2. Login on the authentication screen using the base URL for your Canvas instance. For example, https://longwood.beta.instructure.com should be placed into the text input as just "longwood.beta.instructure.com". The https will be appended when the app makes an API call to authenticate against the specified Canvas instance. Include your admin API key in the second input field on the login screen. 
 
-Make sure you have [Node.js](http://nodejs.org/) and the [Heroku Toolbelt](https://toolbelt.heroku.com/) installed.
+3. The API key is stored in the browser for the duration of your session, so reloading the page will cause the API key to lose its reference in the application. To reauthenticate at any time, click the "Auth" tab in the dashboard. 
 
-```sh
-$ git clone git@github.com:heroku/node-js-getting-started.git # or clone your own fork
-$ cd node-js-getting-started
-$ npm install
-$ npm start
-```
+## Supported Operations 
 
-Your app should now be running on [localhost:5000](http://localhost:5000/).
 
-## Deploying to Heroku
 
-```
-$ heroku create
-$ git push heroku master
-$ heroku open
-```
-
-## Documentation
+## How Can You Help? 
 
 For more information about using Node.js on Heroku, see these Dev Center articles:
 
