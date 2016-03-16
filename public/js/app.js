@@ -145,7 +145,7 @@ app.controller("NewCourseController", function($scope, $http, $rootScope){
 
 				var section = $scope.section; 
 				$scope.newCourseObj.courseObj.course.name = $scope.newCourseObj.courseObj.course.name + "-" + section;
-				$scope.newCourseObj.courseObj.course.course_code = $scope.newCourseObj.courseObj.course.course_code + "-" + section;
+				$scope.newCourseObj.courseObj.course.course_code = $scope.newCourseObj.courseObj.course.course_code + "-" + section; 
 
 				var validJSON = JSON.stringify($scope.newCourseObj); 
 
@@ -415,7 +415,7 @@ app.controller("DevShellsController", function($scope, $http, $rootScope){
 				.success(function(data){
 					console.log(data);
 					//Print out success message for enrolled teacher
-					$scope.successMessages.push("Successfully completed " + data.type + " at " + data.created_at enrolled: " for course " + data.course_id); 
+					$scope.successMessages.push("Successfully completed " + data.type + " at " + data.created_at + " for course " + data.course_id); 
 				})
 				.error(function(data){
 					console.log('Error: ' + data);
