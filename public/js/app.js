@@ -268,7 +268,7 @@ app.controller("CrosslistController", function($scope, $http, $rootScope){
 				.success(function(data){
 					console.log(data);
 					//write two error check statements here (===1 is good, ===0 || >1 bad)
-					if (data.length !== 0){
+					if (data.length == 1){
 						$scope.newCourseObj.courseObj.childSectionID = data[0].id; 
 						$scope.childSectionGood = true; 
 						console.log(data); 
@@ -276,8 +276,12 @@ app.controller("CrosslistController", function($scope, $http, $rootScope){
 						console.log("Would crosslist these two sections"); 
 						crosslistCourses(); 
 
-					} else {
-						$scope.errorMessage = "Something is funky with this child course. It is likely already crosslisted somewhere else: " + data;
+					} else if (data.length == 0) {
+						$scope.errorMessage = "Something is funky with this child course. Check that it is not already crosslisted somewhere else: " + data;
+					} else if (data.length > 1) {
+						$scope.errorMessage = "Something is funky with this child course. Check that it does not have sections crosslisted into it: " + data;
+					} else { //Should never reach this case
+						$scope.errorMessage = "Something else is strange with this child course: " + data;
 					}
 				})
 				.error(function(data){
